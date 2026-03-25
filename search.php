@@ -11,8 +11,8 @@ if ($keyword !== '' || $year !== '' || $level !== '') {
             FROM Programmes 
             LEFT JOIN ProgrammeModules ON Programmes.ProgrammeID = ProgrammeModules.ProgrammeID 
             LEFT JOIN Modules ON ProgrammeModules.ModuleID = Modules.ModuleID 
-            LEFT JOIN Levels ON Programmes.LevelID = Levels.LevelID 
-            WHERE 1=1";
+           /LEFT JOIN Levels ON Programmes.LevelID = Levels.LevelID 
+          WHERE 1=1";
 
     $params = [];
 

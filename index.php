@@ -110,6 +110,7 @@ $programmes = $stmt->fetchAll();
     <footer>
         <p>Supreme University</p>
         <p>Providing quality education and opportunities for students worldwide.</p>
+        <p> Chabahil,Kathmandu</p>
         <p>© 2026 Supreme University</p>
     </footer>
 

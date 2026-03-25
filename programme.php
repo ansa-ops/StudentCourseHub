@@ -18,7 +18,7 @@ switch ($programme['ProgrammeName']) {
     case "BSc Artificial Intelligence":
         $image = "../StudentCourseHub/src/Bsc At.jpg";
         break;
-    case "BSc Information Technology":
+    case "BSc Computer Science":
         $image = "../StudentCourseHub/src/Bsc CS.jpeg";
         break;
     case "BSc Software Engineering":
@@ -32,21 +32,24 @@ switch ($programme['ProgrammeName']) {
         break;
 
     // MSc Programmes
-    case "MSc Computer Science":
-        $image = "../StudentCourseHub/src/Msc CS.jpg";
-        break;
-    case "MSc Data Science":
-        $image = "../StudentCourseHub/src/Msc Ds.webp";
-        break;
     case "MSc Artificial Intelligence":
         $image = "../StudentCourseHub/src/Msc AT.jpg";
-        break;
-    case "MSc Software Engineering":
-        $image = "../StudentCourseHub/src/Msc SE.webp";
         break;
     case "MSc Cyber Security":
         $image = "../StudentCourseHub/src/msc cyberS.jpg";
         break;
+         case "MSc Data Science":
+        $image = "../StudentCourseHub/src/Msc Ds.webp";
+          break;
+        
+    case "MSc Machine Learning":
+        $image = "../StudentCourseHub/src/Msc CS.jpg";
+      
+        break;
+    case "MSc Software Engineering":
+        $image = "../StudentCourseHub/src/Msc SE.webp";
+        break;
+    
 }
 ?>
 <!DOCTYPE html>

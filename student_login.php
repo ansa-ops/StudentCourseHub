@@ -1,40 +1,48 @@
 <?php
 session_start();
-require 'db.php';
-$error = '';
+include "db.php";
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username']);
-    $password = trim($_POST['password']);
+$error = "";
 
-    // Assuming students table has StudentID, Name, Username, Password, ProgrammeID
-    $stmt = $pdo->prepare("SELECT * FROM students WHERE Username = ?");
-    $stmt->execute([$username]);
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    $stmt = $pdo->prepare("SELECT * FROM students WHERE email = ?");
+    $stmt->execute([$email]);
     $student = $stmt->fetch();
 
-    if ($student && password_verify($password, $student['Password'])) {
-        $_SESSION['user_id'] = $student['StudentID'];
-        $_SESSION['programme_id'] = $student['ProgrammeID'];
-        header('Location: student_dashboard.php');
+    if ($student && $student['password'] == $password) {
+        $_SESSION['student_id'] = $student['student_id'];
+        $_SESSION['student_name'] = $student['full_name'];
+        header("Location: student_dashboard.php"); // redirect to dashboard
         exit();
     } else {
-        $error = "Invalid username or password";
+        $error = "Invalid email or password";
     }
 }
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Student Login</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Login - Supreme University</title>
+<link rel="stylesheet" href="../StudentCourseHub/css/style.css">
 </head>
 <body>
-<h2>Student Login</h2>
-<?php if($error) echo "<p style='color:red;'>$error</p>"; ?>
-<form method="POST">
-    <input type="text" name="username" placeholder="Username" required><br><br>
-    <input type="password" name="password" placeholder="Password" required><br><br>
-    <button type="submit">Login</button>
-</form>
+<div class="login-page">
+    <h2>Student Login</h2>
+    <?php if($error): ?>
+        <span><?= htmlspecialchars($error) ?></span>
+    <?php endif; ?>
+    <form method="POST">
+        <input type="text" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <input type="submit" value="Login">
+    </form>
+    <a class="login-button" href="../index.php">Back to Home</a>
+</div>
 </body>
 </html>
