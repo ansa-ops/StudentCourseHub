@@ -1,0 +1,342 @@
+/* ============================
+   General Styles
+============================ */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #e6f2ff; /* light blue background */
+    color: #333;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px 0;
+}
+
+/* Accessibility helpers */
+.hidden { display: none; }
+.sr-only { 
+    position: absolute; 
+    width: 1px; 
+    height: 1px; 
+    padding: 0; 
+    margin: -1px; 
+    overflow: hidden; 
+    clip: rect(0,0,0,0); 
+    border: 0;
+}
+:focus { outline: 3px solid #0066cc; outline-offset: 2px; }
+
+/* ============================
+   Navbar
+============================ */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #004080;
+    color: #fff;
+    padding: 15px 30px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+}
+
+.nav-left .logo {
+    width: 50px;
+    margin-right: 15px;
+    border-radius: 8px;
+}
+
+.nav-left .site-title {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.nav-right a {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: 500;
+}
+
+.nav-right a:hover {
+    text-decoration: underline;
+}
+
+/* ============================
+   Hero Section
+============================ */
+.hero {
+    background: linear-gradient(to right, #3399ff, #66ccff);
+    color: #fff;
+    padding: 80px 30px;
+    text-align: center;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.hero h1 {
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+}
+
+.hero-btn {
+    padding: 12px 30px;
+    background-color: #004080;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background 0.3s;
+}
+
+.hero-btn:hover,
+.hero-btn:focus {
+    background-color: #0066cc;
+}
+
+/* ============================
+   Filter & Search
+============================ */
+.filter-search {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+    justify-content: center;
+    align-items: center;
+}
+
+.filter-search label {
+    margin-right: 5px;
+    font-weight: bold;
+}
+
+.filter-search select,
+.filter-search input,
+.filter-search button {
+    padding: 10px 15px;
+    font-size: 1em;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.filter-search button {
+    background-color: #004080;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.filter-search button:hover,
+.filter-search button:focus {
+    background-color: #0066cc;
+}
+
+/* ============================
+   Programme Cards
+============================ */
+.programmes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.programme-card {
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.programme-card:hover,
+.programme-card:focus-within {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+}
+
+.programme-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.programme-card h3 {
+    margin: 15px;
+}
+
+.programme-card p {
+    margin: 0 15px 10px 15px;
+    font-size: 0.95em;
+}
+
+.register-btn {
+    display: block;
+    margin: 15px;
+    padding: 10px 15px;
+    background-color: #004080;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.register-btn:hover,
+.register-btn:focus {
+    background-color: #0066cc;
+}
+
+/* ============================
+   Programme Page
+============================ */
+.programme-header {
+    padding: 50px 0;
+    text-align: center;
+}
+
+.programme-header .programme-img {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    border-radius: 10px;
+    margin: 20px 0;
+    object-fit: cover;
+}
+
+/* Modules Section */
+.modules-section {
+    margin: 50px 0;
+}
+
+.modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.year-box {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.module-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px dashed #ccc;
+}
+
+.module-item:last-child {
+    border-bottom: none;
+}
+
+/* Register Interest Box */
+.register-box {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 50px 0;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.register-box form input {
+    width: 48%;
+    padding: 10px;
+    margin: 5px 1%;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.register-box form button.register-btn {
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Success Message */
+.success {
+    color: green;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* ============================
+   Footer
+============================ */
+footer {
+    text-align: center;
+    padding: 30px 20px;
+    background-color: #004080;
+    color: #fff;
+    margin-top: 50px;
+    border-radius: 20px 20px 0 0;
+}
+
+footer a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+footer a:hover,
+footer a:focus {
+    text-decoration: underline;
+}
+
+/* ============================
+   Back to Top Button
+============================ */
+#topBtn {
+    display: none;
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    z-index: 99;
+    background-color: #004080;
+    color: white;
+    border: none;
+    outline: none;
+    padding: 12px 16px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background 0.3s;
+}
+
+#topBtn:hover,
+#topBtn:focus {
+    background-color: #0066cc;
+}
+
+/* ============================
+   Responsive
+============================ */
+@media screen and (max-width: 768px) {
+    .hero h1 { font-size: 2em; }
+    .hero p { font-size: 1em; }
+
+    .register-box form input { width: 100%; margin: 5px 0; }
+
+    .filter-search { flex-direction: column; align-items: stretch; }
+}

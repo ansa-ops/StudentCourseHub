@@ -1,113 +1,120 @@
 <?php
-include "db.php";
+include __DIR__ . '/db.php';
+include __DIR__ . '/images.php';
 
-// Get programme ID from URL
-$id = $_GET['id'];
+$programme_id = intval($_GET['id'] ?? 0);
 
-// Fetch programme details
-$sql = "SELECT * FROM Programmes WHERE ProgrammeID = :id";
-$stmt = $pdo->prepare($sql);
-$stmt->execute(['id' => $id]);
-$programme = $stmt->fetch();
+$stmt = $conn->prepare("
+    SELECT p.*, l.LevelName, s.Name AS LeaderName
+    FROM Programmes p
+    JOIN Levels l ON p.LevelID = l.LevelID
+    JOIN Staff s ON p.ProgrammeLeaderID = s.StaffID
+    WHERE p.ProgrammeID = ?
+");
+$stmt->bind_param("i", $programme_id);
+$stmt->execute();
+$programme = $stmt->get_result()->fetch_assoc();
 
-// Determine hero image based on programme name
-$image = "../StudentCourseHub/src/img.jpg"; // default image
+$modules_result = $conn->query("
+    SELECT m.ModuleName, st.Name AS ModuleLeader, pm.Year
+    FROM ProgrammeModules pm
+    JOIN Modules m ON pm.ModuleID = m.ModuleID
+    JOIN Staff st ON m.ModuleLeaderID = st.StaffID
+    WHERE pm.ProgrammeID = $programme_id
+    ORDER BY pm.Year ASC
+");
 
-switch ($programme['ProgrammeName']) {
-    // BSc Programmes
-    case "BSc Artificial Intelligence":
-        $image = "../StudentCourseHub/src/Bsc At.jpg";
-        break;
-    case "BSc Computer Science":
-        $image = "../StudentCourseHub/src/Bsc CS.jpeg";
-        break;
-    case "BSc Software Engineering":
-        $image = "../StudentCourseHub/src/Bsc SE.webp";
-        break;
-    case "BSc Data Science":
-        $image = "../StudentCourseHub/src/Bsc ds.jpg";
-        break;
-    case "BSc Cyber Security":
-        $image = "../StudentCourseHub/src/Bsc CyberS.jpg";
-        break;
+$modules_by_year = [];
+while($mod = $modules_result->fetch_assoc()) {
+    $modules_by_year[$mod['Year']][] = $mod;
+}
 
-    // MSc Programmes
-    case "MSc Artificial Intelligence":
-        $image = "../StudentCourseHub/src/Msc AT.jpg";
-        break;
-    case "MSc Cyber Security":
-        $image = "../StudentCourseHub/src/msc cyberS.jpg";
-        break;
-         case "MSc Data Science":
-        $image = "../StudentCourseHub/src/Msc Ds.webp";
-          break;
-        
-    case "MSc Machine Learning":
-        $image = "../StudentCourseHub/src/Msc CS.jpg";
-      
-        break;
-    case "MSc Software Engineering":
-        $image = "../StudentCourseHub/src/Msc SE.webp";
-        break;
-    
+if($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $name = htmlspecialchars($_POST['name']);
+    $email = htmlspecialchars($_POST['email']);
+
+    $check = $conn->prepare("SELECT * FROM InterestedStudents WHERE ProgrammeID=? AND Email=?");
+    $check->bind_param("is", $programme_id, $email);
+    $check->execute();
+    $result_check = $check->get_result();
+
+    if($result_check->num_rows == 0) {
+        $stmt = $conn->prepare("INSERT INTO InterestedStudents (ProgrammeID, StudentName, Email) VALUES (?, ?, ?)");
+        $stmt->bind_param("iss", $programme_id, $name, $email);
+        $stmt->execute();
+        $success = "Thank you! Your interest has been registered.";
+    } else {
+        $success = "You have already registered your interest for this programme.";
+    }
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($programme['ProgrammeName']) ?> - Supreme University</title>
-    <link rel="stylesheet" href="../StudentCourseHub/css/style.css">
+    <title><?= htmlspecialchars($programme['ProgrammeName']) ?> - Student Course Hub</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-    <!-- HEADER -->
-    <header class="main-header">
-        <div class="logo-container">
-            <img src="../StudentCourseHub/src/LOGO.png" alt="Supreme University Logo" class="logo">
-            <h1>Supreme University</h1>
-        </div>
-    </header>
+<nav class="navbar">
+    <div class="nav-left">
+        <img src="img/logo.png" class="logo" alt="University Logo">
+        <span class="site-title">Student Course Hub</span>
+    </div>
+    <div class="nav-right">
+        <a href="index.php">Home</a>
+    </div>
+</nav>
 
-    <!-- HERO IMAGE -->
-    <div class="hero">
-        <img src="<?= $image ?>" alt="<?= htmlspecialchars($programme['ProgrammeName']) ?>">
+<section class="programme-header container">
+    <h1><?= htmlspecialchars($programme['ProgrammeName']) ?></h1>
+    <p><strong>Level:</strong> <?= htmlspecialchars($programme['LevelName']) ?></p>
+    <p><strong>Programme Leader:</strong> <?= htmlspecialchars($programme['LeaderName']) ?></p>
+
+    <div class="programme-image-wrapper">
+        <img src="img/<?= $images[$programme['ProgrammeName']] ?? 'default.jpg' ?>" alt="<?= htmlspecialchars($programme['ProgrammeName']) ?>" class="programme-img">
     </div>
 
-    <!-- CONTENT -->
-    <div class="container">
-        <div class="programme">
-            <h1><?= htmlspecialchars($programme['ProgrammeName']) ?></h1>
-            <p><?= htmlspecialchars($programme['Description']) ?></p>
-        </div>
+    <p><?= htmlspecialchars($programme['Description']) ?></p>
+</section>
 
-        <h2>Modules</h2>
-        <?php
-        // Fetch programme modules
-        $sql2 = "SELECT Modules.ModuleName 
-                 FROM ProgrammeModules 
-                 JOIN Modules ON ProgrammeModules.ModuleID = Modules.ModuleID 
-                 WHERE ProgrammeModules.ProgrammeID = :id";
-        $stmt2 = $pdo->prepare($sql2);
-        $stmt2->execute(['id' => $id]);
-
-        while ($row = $stmt2->fetch()) {
-            echo "<div class='module'>" . htmlspecialchars($row['ModuleName']) . "</div>";
-        }
-        ?>
-        <br>
-        <a class="button" href="register.php?programme_id=<?= $id ?>">Register Interest</a>
-        <br><br>
-        <a class="button" href="index.php">Back to Programmes</a>
+<div class="container modules-section" role="region" aria-labelledby="modules-title">
+    <h2 id="modules-title">Modules by Year</h2>
+    <div class="modules-grid" role="list">
+        <?php foreach($modules_by_year as $year => $mods): ?>
+            <div class="year-box" role="group" aria-labelledby="year-<?= $year ?>">
+                <h3 id="year-<?= $year ?>">Year <?= $year ?></h3>
+                <ul>
+                    <?php foreach($mods as $mod): ?>
+                        <li class="module-item">
+                            <span class="module-name"><?= htmlspecialchars($mod['ModuleName']) ?></span> – 
+                            <span class="module-leader"><?= htmlspecialchars($mod['ModuleLeader']) ?></span>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endforeach; ?>
     </div>
+</div>
 
-    <!-- FOOTER -->
-    <footer>
-        <p>Supreme University</p>
-        <p>Providing quality education and opportunities for students worldwide.</p>
-        <p>© 2026 Supreme University</p>
-    </footer>
+<div class="container register-box" role="form" aria-labelledby="register-title">
+    <h2 id="register-title">Register Interest</h2>
+    <?php if(isset($success)) echo "<p class='success'>$success</p>"; ?>
+    <form method="post">
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <button type="submit" class="register-btn">Register</button>
+    </form>
+</div>
 
+<button onclick="topFunction()" id="topBtn" title="Go to top">&#8679;</button>
+
+<footer>
+    <p>&copy; 2026 Student Course Hub | University of Excellence</p>
+    <p><a href="#">About</a> | <a href="#">Contact</a> | <a href="#">Privacy Policy</a></p>
+</footer>
+
+<script src="js/script.js"></script>
 </body>
 </html>

@@ -1,21 +1,15 @@
 <?php
-// db.php
-$host = 'localhost';
-$db   = 'student_course_hub';
-$user = 'root';
-$pass = ''; // your MySQL root password
-$charset = 'utf8mb4';
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "student_course_hub";
 
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-$options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-];
-
-try {
-    $pdo = new PDO($dsn, $user, $pass, $options);
-} catch (PDOException $e) {
-    echo "Database connection failed: " . $e->getMessage();
-    exit();
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) {
+    die("Database connection failed: " . $conn->connect_error);
 }
+
+// Set UTF-8 for special characters
+$conn->set_charset("utf8mb4");
 ?>

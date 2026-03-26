@@ -1,157 +1,81 @@
-<?php 
-include "db.php"; 
+<?php
+include __DIR__ . '/db.php';
+include __DIR__ . '/images.php';
 
-// Fetch all programmes
-$sql = "SELECT ProgrammeID, ProgrammeName, LevelID FROM Programmes ORDER BY ProgrammeName";
-$stmt = $pdo->query($sql);
-$programmes = $stmt->fetchAll();
+$result = $conn->query("
+    SELECT p.*, l.LevelName, s.Name AS LeaderName
+    FROM Programmes p
+    JOIN Levels l ON p.LevelID = l.LevelID
+    JOIN Staff s ON p.ProgrammeLeaderID = s.StaffID
+");
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supreme University</title>
-    <link rel="stylesheet" href="../StudentCourseHub/css/style.css">
+    <title>Student Course Hub</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-    <!-- HEADER -->
-    <header class="main-header">
-        <div class="logo-container">
-            <img src="../StudentCourseHub/src/LOGO.png" alt="Supreme University Logo" class="logo">
-            <h1>Supreme University</h1>
-        </div>
+<nav class="navbar">
+    <div class="nav-left">
+        <img src="img/logo.png" class="logo" alt="University Logo">
+        <span class="site-title">Student Course Hub</span>
+    </div>
+    <div class="nav-right">
+        <a href="#" id="homeLink">Home</a>
+    </div>
+</nav>
 
-        <!-- RIGHT SIDE: Login + Search + Menu -->
-        <div class="header-right">
-            <!-- Login Button -->
-            <a href="login.php" class="login-btn">Login</a>
+<section class="hero" id="hero">
+    <div class="hero-content">
+        <h1>Find Your Future Degree</h1>
+        <p>Explore undergraduate and postgraduate programmes designed for your success.</p>
+        <button class="hero-btn" id="browseBtn">Browse Programmes</button>
+    </div>
+</section>
 
-            <!-- Search Form -->
-            <form action="search.php" method="get" class="search-container">
-                <input type="text" name="query" placeholder="Search programmes...">
-                <select name="level">
-                    <option value="">All Levels</option>
-                    <option value="1">Undergraduate</option>
-                    <option value="2">Postgraduate</option>
-                </select>
-                <input type="submit" value="Search">
-            </form>
+<section id="programmes" class="container hidden" role="region" aria-labelledby="programmes-title">
+    <h2 id="programmes-title">Available Programmes</h2>
 
-            <!-- Menu Button -->
-            <div class="menu-button" id="menuBtn">☰</div>
-        </div>
-    </header>
+    <div class="filter-search" role="form" aria-label="Filter and search programmes">
+        <label for="levelFilter">Level:</label>
+        <select id="levelFilter">
+            <option value="All">All Levels</option>
+            <option value="Undergraduate">Undergraduate</option>
+            <option value="Postgraduate">Postgraduate</option>
+        </select>
 
-    <!-- HERO IMAGE -->
-    <div class="hero">
-        <img src="../StudentCourseHub/src/img.jpg" alt="University Banner">
+        <label for="searchInput">Search:</label>
+        <input type="text" id="searchInput" placeholder="Search programmes...">
+        <button id="searchBtn" class="hero-btn">Search</button>
     </div>
 
-    <!-- WHY SUPREME -->
-    <div class="why-supreme">
-        <h2>Why Supreme</h2>
-        <br><br>
-        <p style="font-weight:bold">
-            At Supreme University, we are committed to providing a world-class education that empowers students 
-            to achieve their full potential. Our dedicated faculty, state-of-the-art facilities, and diverse academic 
-            programs create an environment where innovation, critical thinking, and practical skills thrive. By combining 
-            rigorous coursework with real-world experiences, Supreme University prepares students to excel in their 
-            careers and make meaningful contributions to society.
-        </p>
+    <div class="programmes-grid" role="list" id="programmesGrid">
+        <?php while($programme = $result->fetch_assoc()): 
+            $image = $images[$programme['ProgrammeName']] ?? 'default.jpg';
+        ?>
+        <article class="programme-card" data-level="<?= $programme['LevelName'] ?>" data-name="<?= strtolower($programme['ProgrammeName']) ?>" role="listitem" tabindex="0">
+            <img src="img/<?= $image ?>" alt="<?= htmlspecialchars($programme['ProgrammeName']) ?>">
+            <h3><?= htmlspecialchars($programme['ProgrammeName']) ?></h3>
+            <p><?= substr(htmlspecialchars($programme['Description']), 0, 90) ?>...</p>
+            <p><strong>Leader:</strong> <?= htmlspecialchars($programme['LeaderName']) ?></p>
+            <a href="programme.php?id=<?= $programme['ProgrammeID'] ?>" class="register-btn">View Details</a>
+        </article>
+        <?php endwhile; ?>
     </div>
 
-    <!-- MENU PANEL -->
-    <div class="menu-panel" id="menuPanel">
-        <a href="#">News</a>
-        <a href="#">Jobs</a>
-        <a href="#" id="coursesBtn">Available Courses ▼</a>
+    <div id="aria-live-region" class="sr-only" aria-live="polite"></div>
+</section>
 
-        <!-- COURSES -->
-        <div class="courses-list" id="coursesList">
-            <!-- Undergraduate -->
-            <div class="course-group">
-                <h3 id="ugBtn">Undergraduate Degree Programme ▼</h3>
-                <div class="submenu" id="ugList">
-                    <?php foreach($programmes as $course): ?>
-                        <?php if($course['LevelID'] == 1): ?>
-                            <div class="menu-course">
-                                <a href="programme.php?id=<?= $course['ProgrammeID'] ?>">
-                                    <?= $course['ProgrammeName'] ?>
-                                </a>
-                            </div>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                </div>
-            </div>
+<button onclick="topFunction()" id="topBtn" title="Go to top">&#8679;</button>
 
-            <!-- Postgraduate -->
-            <div class="course-group">
-                <h3 id="pgBtn">Postgraduate Degree Programme ▼</h3>
-                <div class="submenu" id="pgList">
-                    <?php foreach($programmes as $course): ?>
-                        <?php if($course['LevelID'] == 2): ?>
-                            <div class="menu-course">
-                                <a href="programme.php?id=<?= $course['ProgrammeID'] ?>">
-                                    <?= $course['ProgrammeName'] ?>
-                                </a>
-                            </div>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-        </div>
+<footer>
+    <p>&copy; 2026 Student Course Hub | University of Excellence</p>
+    <p><a href="#">About</a> | <a href="#">Contact</a> | <a href="#">Privacy Policy</a></p>
+</footer>
 
-        <div class="close-btn" id="closeMenu">Close ×</div>
-    </div>
-
-    <!-- FOOTER -->
-    <footer>
-        <p>Supreme University</p>
-        <p>Providing quality education and opportunities for students worldwide.</p>
-        <p> Chabahil,Kathmandu</p>
-        <p>© 2026 Supreme University</p>
-    </footer>
-
-    <script>
-        // MENU
-        const menuBtn = document.getElementById('menuBtn');
-        const menuPanel = document.getElementById('menuPanel');
-        const closeBtn = document.getElementById('closeMenu');
-
-        menuBtn.addEventListener('click', () => {
-            menuPanel.style.transform = "translateY(0%)";
-        });
-
-        closeBtn.addEventListener('click', () => {
-            menuPanel.style.transform = "translateY(100%)";
-        });
-
-        // Available Courses toggle
-        const coursesBtn = document.getElementById('coursesBtn');
-        const coursesList = document.getElementById('coursesList');
-
-        coursesBtn.addEventListener('click', () => {
-            coursesList.style.display = (coursesList.style.display === "block") ? "none" : "block";
-        });
-
-        // Undergraduate toggle
-        const ugBtn = document.getElementById('ugBtn');
-        const ugList = document.getElementById('ugList');
-
-        ugBtn.addEventListener('click', () => {
-            ugList.style.display = (ugList.style.display === "block") ? "none" : "block";
-        });
-
-        // Postgraduate toggle
-        const pgBtn = document.getElementById('pgBtn');
-        const pgList = document.getElementById('pgList');
-
-        pgBtn.addEventListener('click', () => {
-            pgList.style.display = (pgList.style.display === "block") ? "none" : "block";
-        });
-    </script>
-
+<script src="js/script.js"></script>
 </body>
 </html>
