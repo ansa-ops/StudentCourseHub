@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+ HEAD
 /* ===================== */
 /* RESET */
 /* ===================== */
@@ -366,7 +366,6 @@ h3{
 .student-dashboard  {
     background: #0096c7;
 }
-=======
 /* ============================
    General Styles
 ============================ */
@@ -709,4 +708,4 @@ footer a:focus {
 
     .filter-search { flex-direction: column; align-items: stretch; }
 }
->>>>>>> student-part
+/* student part 
